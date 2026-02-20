@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../sw.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>mObywatel 2.0</title>
+    <link rel="shortcut icon" href="../dowod_files/favicon.ico" type="image/x-icon">
+    <meta name="theme-color" content="#fff">
+    <link rel="preload" href="../dowod_files/main.css" as="style">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="../manifest.json">
+
+    <style>
+        :root {
+            --blue-active: #006aff; /* A representative blue color */
+            --light-grey: #f5f6fb;
+            --dark-text: #2f353f;
+            --medium-grey: #d6d6d6;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--light-grey);
+            margin: 0;
+            padding: 0;
+            overscroll-behavior: contain;
+            color: var(--dark-text);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #fff;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 9999;
+        }
+        header a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        header img {
+            height: 24px;
+            width: 24px;
+            margin-right: 8px;
+        }
+        header span {
+            font-weight: 700;
+            font-size: 17px;
+        }
+        
+        .czas {
+            text-align: center;
+            margin-top: 70px; /* Space for the fixed header */
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        main {
+            display: flex;
+            background-color: #fff;
+            margin: 0 16px;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            gap: 16px;
+            
+            /* --- TYLKO DODANIE TŁA DLA GŁÓWNEJ KARTY --- */
+            background-image: url('../images/tlo_dowod.png'); 
+            background-repeat: no-repeat;
+            background-position: center; 
+            background-size: cover; 
+            /* ------------------------------------------- */
+            
+            min-height: 250px; 
+        }
+
+        #lew {
+            flex: 0 0 35%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* ZMIANA: Wyrównanie elementów do lewej krawędzi (start) */
+        }
+
+        .photo {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            filter: grayscale(100%);
+            object-fit: cover;
+            aspect-ratio: 3 / 4; /* Typical ID photo aspect ratio */
+            margin-bottom: 10px;
+        }
+
+        #rzecz {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* ZMIANA: Zmieniono z center na flex-start dla wyrównania */
+            text-align: left; /* ZMIANA: Wyrównanie tekstu do lewej */
+            margin-top: 10px;
+            font-size: 10px;
+        }
+
+        #godlo {
+            height: 35px;
+            width: 30px;
+            margin-right: 4px;
+        }
+        #flaga {
+            display: block !important; 
+            width: 60px; 
+            height: 48px; 
+            margin-right: 8px;
+            margin-bottom: 8px; /* DODANO: Odstęp między flagą a godłem/tekstem */
+            margin-left: 0; /* DODANO: Zapewnienie wyrównania do lewej */
+        }
+
+
+        #praw {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        #praw p {
+            margin: 0;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+        #praw .sub {
+            font-size: 11px;
+            color: #6c757d; 
+            margin-bottom: 12px;
+            font-weight: 400;
+        }
+
+        #bottom{
+            position: relative;
+            height: 42px;
+            background-color: #ffffff;
+            box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.15);
+            border-radius: 0px 0px 12px 12px;
+            margin: 0 20px 16px 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            color: #598527;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        #bottom p{
+            margin-left: 20px;
+        }
+
+
+        #bottom img {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        
+        /* Action buttons below the main card */
+        #action-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 16px;
+        }
+        .action-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            font-size: 10px;
+            color: var(--dark-text);
+            text-decoration: none;
+            width: 23%; /* To fit four evenly */
+        }
+        .action-icon {
+            background-color: #fff;
+            border-radius: 50%;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 4px;
+            width: 24px; /* Icon size inside padding */
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Usunięto globalne ukrywanie img */
+        }
+        /* Globalne style dla img wewnątrz action-icon */
+        .action-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Zapewnienie, że obrazek dopasuje się, zachowując proporcje */
+        }
+
+        /* Specyficzny styl dla ikonki dowodu osobistego (CARD ICON) */
+        .action-icon.card-icon {
+            /* Przywrócony styl dla tła, ale tym razem bez zniekształceń */
+            background-image: url('../dowod_files/card.png');
+            background-size: 24px auto; /* Szerokość 24px, auto wysokość (zachowanie proporcji) */
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        /* Ukrywamy img TYLKO w tej konkretnej ikonce, która używa tła */
+        .action-icon.card-icon img {
+            display: none; 
+        }
+
+        /* Styling dla trzech pionowych kropek (ellipsis) */
+        .vertical-dots {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            width: 24px;
+            height: 24px;
+        }
+
+        .vertical-dots div {
+            width: 4px;
+            height: 4px;
+            background-color: var(--blue-active);
+            border-radius: 50%;
+        }
+
+        /* Expanded data section (dane stałe) */
+        .expanded-data-section {
+            background-color: #fff;
+            margin: 0 16px;
+            padding: 0 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 16px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .data-row:last-of-type {
+            border-bottom: none;
+        }
+        .data-info {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .data-main {
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .data-main button {
+            margin-left: 8px;
+            padding: 4px 12px;
+            background-color: #e6f0ff;
+            color: var(--blue-active);
+            border: none;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .data-main button:hover {
+            background-color: #d1e3ff;
+        }
+
+        /* Nagłówki sekcji rozwijanych (w tym "Informacje dodatkowe") */
+        .collapsible-header, .update-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            margin: 8px 16px 0 16px;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .collapsible-header p, .update-section p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .collapsible-header {
+            /* Nadpisanie marginesu i cienia dla nagłówka przed sekcją rozwijaną */
+            margin-bottom: 0;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        /* === STYLE DLA NOWEJ ROZWIJANEJ SEKCJI (#rogo) === */
+        #rogo {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+            margin: 0 16px; /* Wyrównanie z nagłówkiem */
+            background-color: #fff;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 0 16px;
+            margin-bottom: 8px; /* Domyślny mały margines */
+        }
+        #rogo.expanded {
+            /* Duża wartość, by pomieścić całą zawartość i zapewnić płynną animację */
+            max-height: 1000px; 
+            margin-bottom: 16px; /* Większy odstęp po rozwinięciu */
+        }
+
+        /* Style dla wierszy danych w rozwijanej sekcji (class="dana") */
+        #rogo .dana {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0; 
+        }
+        /* Usuwamy dolną linię z ostatniego elementu w sekcji */
+        #rogo .dana:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Style dla tekstu wewnątrz .dana, wykorzystujące istniejące klasy info i main */
+        #rogo .dana .info {
+            font-size: 14px;
+            color: #6c757d;
+            margin: 0;
+        }
+        #rogo .dana .main {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0;
+            text-align: right;
+        }
+        
+        /* Usuwamy niepotrzebne style dla kreski, bo uzywamy border-bottom na .dana */
+        #rogo .krecha {
+            display: none; 
+        }
+        /* === KONIEC STYLI DLA NOWEJ ROZWIJANEJ SEKCJI === */
+
+        /* Reszta CSS dla sekcji update-section i nawigacji */
+        .update-section {
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 8px;
+            margin-bottom: 100px; /* Space for the fixed bottom nav */
+        }
+        .update-section .data-info {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+        .update-section .data-main {
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .update-section button {
+            padding: 8px 16px;
+            background-color: var(--blue-active);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .update-section button:hover {
+            background-color: #0056e6;
+        }
+
+        /* Bottom Navigation (as in original code, but simplified) */
+        .BottomNav_bottomNav__JQdpA {
+            width: 100%;
+            height: 80px; /* Adjusted height for better fit */
+            position: fixed;
+            bottom: 0;
+            background-color: #fff; /* Changed to white background for modern look */
+            border-top: 1px solid var(--medium-grey);
+            z-index: 99;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .BottomNav_bnTab__WzkWH {
+            width: 20%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 5px;
+            cursor: pointer;
+        }
+        .BottomNav_bnTab__WzkWH img {
+            height: 24px;
+            width: 24px;
+            margin-bottom: 4px;
+        }
+        .BottomNav_bnTab__WzkWH span {
+            font-size: .7em;
+            font-weight: 400;
+        }
+        .BottomNav_activeText__6iAIF {
+            color: var(--blue-active);
+        }
+
+        /* General cleanup */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        #arrow {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Ensure image alignment for flag/godlo - though they are mostly hidden in the current view */
+        #rzecz p {
+            line-height: 1.1;
+        }
+    </style>
+</head>
+<body class="">
+    <header>
+        <a href="dashboard.html">
+            <img src="../images/strzalka-w-lewo.png" alt="Wróć" style="margin-right: 0;">
+            <span style="font-weight: 500; margin-left: 10px;">mDowód</span>
+        </a>
+        <span style="font-family: 'Inter'; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%);"></span>
+        <img style="width: 25px; height: 25px;" src="../dowod_files/madziamojakotka123.svg" alt="Pomoc/Ustawienia">
+    </header>
+
+
+    <p class="czas">Czas: 14:46:18 13.08.2025</p>
+    <script src="../dowod_files/timenew.js"></script>
+    <main>
+        <section id="lew">
+            <img src="image.png" class="object-contain w-full rounded-lg photo" style="margin: 0;" alt="Brak Zdjęcia">
+            <p></p>
+            <img src="../dowod_files/flaga.gif" alt="flaga" id="flaga" style="margin: 0;">
+            <div id="rzecz">
+                <img src="../dowod_files/godlo.gif" alt="godlo" id="godlo">
+                <p>Rzeczpospolita
+                    <br>Polska</p>
+            </div>
+        </section>
+        <section id="praw">
+            <p>ALI</p>
+            <p class="sub">Imię (Imiona)</p><br>
+            <p>KHALIL</p>
+            <p class="sub">Nazwiskо</p><br>
+            <p>POLSKIE</p>
+            <p class="sub">Obywatelstwo</p><br>
+            <p>03.01.2008</p>
+            <p class="sub">Data urodzenia</p><br>
+            <p>08210324776</p>
+            <p class="sub">Numer PЕSEL</p><br>
+        </section>
+    </main>
+    
+    <section id="bottom">
+        <img src="../dowod_files/checkmark.svg" alt="checkmark">
+        <p>Dokument ważny</p>
+    </section>
+
+    <section id="action-bar">
+        <a class="action-button" href="#">
+            <div class="action-icon">
+                <img src="../dowod_files/checkbo.png" alt="Potwierdź dane">
+            </div>
+            <span>Potwierdź swoje dane</span>
+        </a>
+        <a class="action-button" href="#">
+            <div class="action-icon card-icon">
+                <img src="../dowod_files/card.png" alt="Dane dowodu"> </div>
+            <span>Dane dowodu osobistego</span>
+        </a>
+        <a class="action-button" href="#">
+            <div class="action-icon">
+                <img src="../images/da008_zastrzez_pesel.png" alt="Zastrzeż PESEL">
+            </div>
+            <span>Zastrzeż PESEL</span>
+        </a>
+        <a class="action-button" href="#">
+            <div class="action-icon">
+                <div class="vertical-dots">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+            <span>Pozostałe skróty</span>
+        </a>
+    </section>
+
+    <section class="expanded-data-section">
+        <div class="data-row">
+            <p class="data-info">Seria i numer</p>
+            <p class="data-main">
+                <span style="font-weight: 700;">MDDU6755</span>
+                <button id="kopiuj">Kopiuj</button>
+            </p>
+        </div>
+        <div class="data-row">
+            <p class="data-info">Termin ważności</p>
+            <p class="data-main">05.06.2028</p>
+        </div>
+        <div class="data-row">
+            <p class="data-info">Data wydania</p>
+            <p class="data-main">05.06.2025</p>
+        </div>
+        <div class="data-row">
+            <p class="data-info">Imię ojca</p>
+            <p class="data-main">Hassane</p>
+        </div>
+        <div class="data-row" style="border-bottom: none;">
+            <p class="data-info">Imię matki</p>
+            <p class="data-main">Wioletta</p>
+        </div>
+    </section>
+
+    <div class="collapsible-header" id="school-header" style="border-radius: 12px 12px 0 0;">
+        <p>Informacje dodatkowe</p>
+        <img src="../dowod_files/arrow.svg" alt="arrow" id="school-arrow" style="width: 14px; height: 14px; transform: rotate(0deg); transition: transform 0.3s ease;">
+    </div>
+    
+    <div id="rogo">
+        <div class="content">
+            <section class="dana">
+                <p class="info">Nazwiskо rodowе</p>
+                <p class="main">Khalil</p>
+            </section>
+            <section class="dana">
+                <p class="info">Płеć</p>
+                <p class="main">MĘSZCZYZNA</p>
+            </section>
+            <section class="dana">
+                <p class="info">Nazwiskо rodowе ojca</p>
+                <p class="main">NOWAK</p>
+            </section>
+            <section class="dana">
+                <p class="info">Nazwiskо rodowе matki</p>
+                <p class="main">NOWAK</p>
+            </section>
+            <section class="dana">
+                <p class="info">Miejsce urоdzenia</p>
+                <p class="main">TORUŃ</p>
+            </section>
+            <section class="dana">
+                <p class="info">Аdres zameldоwania na pobyt stały</p>
+                <p class="main">UL. GABRIELA NARUTOWICZA 67<br>87-720 CIECHOCINEK</p>
+            </section>
+            <section class="dana">
+                <p class="info">Data zameldоwaniа na pobyt stały</p>
+                <p class="main">05.12.2010</p>
+            </section>
+        </div>
+    </div>
+    <section class="update-section">
+        <p class="data-info">Ostatnia aktualizacja</p>
+        <p class="data-main">
+            <span style="font-weight: 700;">17.02.2024</span>
+            <button id="aktualizuj">Aktualizuj</button>
+        </p>
+    </section>
+
+    <div class="BottomNav_bottomNav__JQdpA" style="display: none;">
+        </div>
+    
+    <div style="height: 100px;"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.getElementById('school-header');
+            const content = document.getElementById('rogo');
+            const arrow = document.getElementById('school-arrow');
+            
+            // Inicjalizacja: upewnienie się, że jest zwinięte
+            content.classList.remove('expanded'); 
+            
+            header.addEventListener('click', () => {
+                content.classList.toggle('expanded');
+                
+                // Przełączanie rotacji strzałki: 0deg (zwinięte/prawo) do 90deg (rozwinięte/dół)
+                if (content.classList.contains('expanded')) {
+                    arrow.style.transform = 'rotate(90deg)';
+                    // Zmieniamy zaokrąglenie nagłówka po rozwinięciu
+                    header.style.borderRadius = '12px 12px 0 0';
+                } else {
+                    arrow.style.transform = 'rotate(0deg)';
+                    // Przywracamy pełne zaokrąglenie po zwinięciu
+                    header.style.borderRadius = '12px'; 
+                }
+            });
+            
+            // Dodatkowa funkcja dla Kopiuj (Copy)
+            const kopiujButton = document.getElementById('kopiuj');
+            if (kopiujButton) {
+                kopiujButton.addEventListener('click', () => {
+                    const serialNumber = kopiujButton.previousElementSibling.textContent;
+                    // Kopiowanie do schowka
+                    navigator.clipboard.writeText(serialNumber).then(() => {
+                        alert('Skopiowano: ' + serialNumber.trim());
+                    }).catch(err => {
+                        console.error('Błąd kopiowania: ', err);
+                        alert('Błąd kopiowania. Spróbuj ręcznie.');
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
